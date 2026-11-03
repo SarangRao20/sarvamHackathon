@@ -1,0 +1,261 @@
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/jetbrains-mono";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  /* Dark theme — RGB channels for Tailwind's opacity modifier syntax */
+  --c-bg:    10 10 10;
+  --c-s1:    16 16 17;
+  --c-s2:    22 22 23;
+  --c-s3:    30 30 31;
+  --c-line:  38 38 40;
+  --c-lines: 58 58 61;
+  --c-ink:   250 250 249;
+  --c-ink2:  163 163 163;
+  --c-ink3:  115 115 115;
+  /* Hex shortcuts */
+  --bg-hex:    #0a0a0a;
+  --s1-hex:    #101011;
+  --s2-hex:    #161617;
+  --s3-hex:    #1e1e1f;
+  --ink-hex:   #fafaf9;
+  --ink3-hex:  #737373;
+  --line-hex:  #262628;
+  --lines-hex: #3a3a3d;
+  /* Accent — emergency orange */
+  --accent:    #f97316;
+  --accent-glow: #fb923c;
+  /* Status */
+  --status-critical: #ef4444;
+  --status-warning:  #f59e0b;
+  --status-good:     #22c55e;
+}
+
+html.light {
+  color-scheme: light;
+  --c-bg:    248 249 251;
+  --c-s1:    255 255 255;
+  --c-s2:    240 242 246;
+  --c-s3:    232 235 240;
+  --c-line:  226 228 233;
+  --c-lines: 205 208 216;
+  --c-ink:   13 15 20;
+  --c-ink2:  58 62 74;
+  --c-ink3:  107 114 128;
+  --bg-hex:   #f8f9fb;
+  --s1-hex:   #ffffff;
+  --s2-hex:   #f0f2f6;
+  --s3-hex:   #e8ebf0;
+  --ink-hex:  #0d0f14;
+  --ink3-hex: #6b7280;
+  --line-hex: #e2e4e9;
+  --lines-hex: #cdd0d8;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--bg-hex);
+  color: var(--ink-hex);
+  font-family: "Inter Variable", Inter, "Segoe UI", system-ui, sans-serif;
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--lines-hex) transparent;
+}
+
+::selection {
+  background: rgba(249, 115, 22, 0.3);
+}
+
+@layer components {
+  .glass {
+    background: rgb(var(--c-s1) / 0.96);
+    border: 1px solid rgb(var(--c-line) / 1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .glass-hover {
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  }
+  .glass-hover:hover {
+    border-color: rgba(249, 115, 22, 0.25);
+    box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.1);
+  }
+  .text-gradient {
+    color: var(--ink-hex);
+  }
+  .text-gradient-blue {
+    color: var(--accent-glow);
+  }
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background: var(--s2-hex);
+    border-radius: 8px;
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    animation: shimmer 1.8s infinite;
+  }
+  .accent-line-top::before {
+    content: "";
+    position: absolute;
+    inset-x: 0;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(249, 115, 22, 0.5) 50%, transparent);
+    pointer-events: none;
+  }
+}
+
+/* Ambient backdrop */
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--bg-hex);
+}
+.ambient-grid { display: none; }
+.ambient-scan { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---- Leaflet incident markers ------------------------------------------- */
+.aa-marker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: var(--c);
+  color: var(--bg-hex);
+  font: 700 11px/1 "JetBrains Mono Variable", "JetBrains Mono", Consolas, monospace;
+  box-shadow: 0 0 0 2px var(--s1-hex), 0 0 18px -2px var(--c);
+  transition: transform 0.2s;
+}
+.aa-marker:hover {
+  transform: scale(1.15);
+}
+.aa-marker.aa-critical::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: var(--c);
+  animation: pulse-ring 2.2s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+  z-index: -1;
+}
+.aa-marker.aa-unverified {
+  outline: 2px dashed rgba(var(--c-ink) / 0.85);
+  outline-offset: 2px;
+}
+.aa-marker.aa-verified {
+  outline: 2px solid #2fd06b;
+  outline-offset: 2px;
+}
+.aa-marker.aa-selected {
+  box-shadow: 0 0 0 2px var(--s1-hex), 0 0 0 4px rgba(249, 115, 22, 0.5), 0 0 20px rgba(249, 115, 22, 0.3);
+}
+.aa-cluster {
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(var(--c-s1) / 0.92);
+  border: 3px solid var(--c);
+  box-shadow: 0 0 20px -4px var(--c);
+  color: var(--ink-hex);
+  font: 700 12px/1 "JetBrains Mono Variable", "JetBrains Mono", Consolas, monospace;
+}
+.aa-tt {
+  font-size: 12px;
+  line-height: 1.4;
+}
+.leaflet-tooltip.aa-place-label {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  color: #6b7280;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  padding: 0;
+}
+.leaflet-tooltip.aa-place-label::before {
+  display: none;
+}
+.leaflet-container {
+  background: transparent;
+  font-family: "Inter Variable", Inter, "Segoe UI", system-ui, sans-serif;
+}
+.leaflet-tooltip {
+  background: rgb(var(--c-s2) / 0.95);
+  backdrop-filter: blur(8px);
+  color: var(--ink-hex);
+  border: 1px solid var(--lines-hex);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.7);
+}
+.leaflet-tooltip-top::before {
+  border-top-color: var(--lines-hex);
+}
+.leaflet-bar {
+  border: 0 !important;
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.7) !important;
+  border-radius: 10px !important;
+  overflow: hidden;
+}
+.leaflet-bar a {
+  background: rgb(var(--c-s2) / 0.9);
+  color: var(--ink-hex);
+  border-bottom-color: var(--lines-hex);
+}
+.leaflet-bar a:hover {
+  background: var(--s3-hex);
+}
+.leaflet-control-attribution {
+  background: rgb(var(--c-s1) / 0.7) !important;
+  color: var(--ink3-hex) !important;
+}
+.leaflet-control-attribution a {
+  color: #7cb8ff !important;
+}
+/* Offline basemap */
+.offline-basemap {
+  background:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px),
+    #0a0a0a;
+  background-size: 60px 60px, 60px 60px, 12px 12px, 12px 12px, auto;
+}
+/* Keep OSM tiles dark when a local pack is loaded */
+.leaflet-tile-pane {
+  filter: brightness(0.55) contrast(1.15) saturate(0.5) invert(0.94) hue-rotate(178deg);
+}
